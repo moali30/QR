@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Tajawal", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .print-page-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0; /* Zero margins so we manage padding inside the component */
+  }
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background-color: white !important;
+  }
+}
