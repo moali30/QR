@@ -4,7 +4,9 @@
  */
 import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import { PlusCircle, Printer, FileText, Settings, Upload, X } from 'lucide-react';
+import { PlusCircle, Printer, FileText, Settings, Upload, X, Download } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import { toPng } from 'html-to-image';
 import { fileToBase64 } from '@/src/lib/utils';
 import { FacultyMember } from '@/src/types';
 import { FormItem } from '@/src/components/FormItem';
@@ -18,12 +20,62 @@ export default function App() {
   const [universityLogo, setUniversityLogo] = useState<string>('');
   const [collegeLogo, setCollegeLogo] = useState<string>('');
   
+  const [isExporting, setIsExporting] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
     contentRef: reportRef,
     documentTitle: 'تقرير_QR_أعضاء_التدريس',
   });
+
+  const handleDownloadPDF = async () => {
+    if (!reportRef.current) return;
+    
+    try {
+      setIsExporting(true);
+      
+      // Select the element to capture (the div inside the hidden component)
+      const element = reportRef.current;
+      
+      // Temporarily remove hidden classes if necessary or ensure it's in the DOM
+      // The current component uses 'hidden print:block'. html-to-image won't capture 'display: none'.
+      // We'll temporarily use a style to make it visible but off-screen
+      const originalStyle = element.style.display;
+      element.parentElement!.style.display = 'block';
+      element.parentElement!.style.position = 'absolute';
+      element.parentElement!.style.left = '-9999px';
+      element.parentElement!.style.top = '0';
+
+      const dataUrl = await toPng(element, { 
+        quality: 1.0,
+        pixelRatio: 2, // Higher resolution
+      });
+
+      // Reset styles
+      element.parentElement!.style.display = '';
+      element.parentElement!.style.position = '';
+      element.parentElement!.style.left = '';
+      element.parentElement!.style.top = '';
+
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      const imgProps = pdf.getImageProperties(dataUrl);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('تقرير_QR_أعضاء_التدريس.pdf');
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      alert('حدث خطأ أثناء تحميل الملف. يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void) => {
     const file = e.target.files?.[0];
@@ -70,12 +122,25 @@ export default function App() {
         </div>
         <div className="flex items-center space-x-reverse space-x-4">
           <button
+            onClick={() => handleDownloadPDF()}
+            disabled={isPrintDisabled || isExporting}
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-bold shadow shadow-emerald-200 transition-colors"
+          >
+            {isExporting ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <Download size={18} />
+            )}
+            <span>تحميل PDF مباشر</span>
+          </button>
+          
+          <button
             onClick={() => handlePrint()}
-            disabled={isPrintDisabled}
-            className="flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 disabled:bg-slate-300 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-bold shadow shadow-indigo-200 transition-colors"
+            disabled={isPrintDisabled || isExporting}
+            className="flex items-center gap-2 border-2 border-indigo-700 text-indigo-700 hover:bg-indigo-50 disabled:border-slate-300 disabled:text-slate-400 disabled:cursor-not-allowed px-5 py-2.5 rounded-lg font-bold transition-colors"
           >
             <Printer size={18} />
-            <span>توليد تقرير PDF للطباعة</span>
+            <span>طباعة عادية</span>
           </button>
         </div>
       </header>
