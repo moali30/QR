@@ -14,30 +14,39 @@ export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
 
   const getLayoutClasses = (count: number) => {
     if (count === 1) return 'flex flex-col items-center justify-center mt-20 mb-20';
-    if (count === 2) return 'grid grid-cols-2 gap-20 mt-24 max-w-4xl mx-auto';
-    if (count <= 4) return 'grid grid-cols-2 gap-y-24 gap-x-16 mt-16 max-w-4xl mx-auto px-8';
-    if (count <= 6) return 'grid grid-cols-3 gap-y-16 gap-x-10 mt-12';
-    return 'grid grid-cols-3 gap-y-12 gap-x-8 mt-10';
+    if (count === 2) return 'flex flex-wrap justify-center gap-20 mt-24 max-w-4xl mx-auto';
+    if (count <= 4) return 'flex flex-wrap justify-center gap-y-20 gap-x-16 mt-16 max-w-4xl mx-auto px-8';
+    if (count <= 6) return 'flex flex-wrap justify-center gap-y-14 gap-x-10 mt-12';
+    if (count <= 9) return 'flex flex-wrap justify-center gap-y-10 gap-x-8 mt-10';
+    if (count <= 12) return 'flex flex-wrap justify-center gap-y-8 gap-x-6 mt-8';
+    return 'flex flex-wrap justify-center gap-y-6 gap-x-4 mt-6';
   };
 
   const getQRSizeClasses = (count: number) => {
     if (count === 1) return 'w-80 h-80 border-[12px] rounded-[2rem] p-6 shadow-2xl';
     if (count === 2) return 'w-72 h-72 border-[10px] rounded-[1.5rem] p-5 shadow-xl';
-    if (count <= 4) return 'w-56 h-56 border-8 rounded-2xl p-4 shadow-lg';
-    return 'w-44 h-44 border-[6px] rounded-2xl p-3 shadow-md';
+    if (count <= 4) return 'w-60 h-60 border-8 rounded-2xl p-4 shadow-lg';
+    if (count <= 6) return 'w-48 h-48 border-[6px] rounded-2xl p-3 shadow-md';
+    if (count <= 9) return 'w-40 h-40 border-[5px] rounded-xl p-2.5 shadow-sm';
+    if (count <= 12) return 'w-36 h-36 border-[4px] rounded-lg p-2 shadow-sm';
+    return 'w-32 h-32 border-[3px] rounded-lg p-1.5 shadow-sm';
   };
   
   const getTextSizeClasses = (count: number) => {
     if (count === 1) return 'text-3xl min-w-[400px] px-10 py-5 rounded-2xl';
     if (count === 2) return 'text-2xl min-w-[320px] px-8 py-4 rounded-xl';
     if (count <= 4) return 'text-xl min-w-[260px] px-6 py-3 rounded-xl';
-    return 'text-sm min-w-[200px] px-4 py-2.5 rounded-lg';
+    if (count <= 6) return 'text-lg min-w-[200px] px-5 py-2.5 rounded-lg';
+    if (count <= 9) return 'text-base min-w-[180px] px-4 py-2 rounded-lg';
+    if (count <= 12) return 'text-sm min-w-[160px] px-3 py-1.5 rounded-md';
+    return 'text-xs min-w-[140px] px-2 py-1 rounded-md';
   };
 
   const getTriangleClasses = (count: number) => {
     if (count === 1) return 'border-l-[20px] border-r-[20px] border-b-[20px] -top-4';
     if (count <= 4) return 'border-l-[16px] border-r-[16px] border-b-[16px] -top-3';
-    return 'border-l-[12px] border-r-[12px] border-b-[12px] -top-2';
+    if (count <= 9) return 'border-l-[12px] border-r-[12px] border-b-[12px] -top-2';
+    return 'border-l-[10px] border-r-[10px] border-b-[10px] -top-1.5';
   };
 
   return (
@@ -80,7 +89,7 @@ export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
           {/* Dynamic Grid / Single centered QR */}
           <div className={`${getLayoutClasses(count)} flex-1`}>
             {members.map((member, index) => (
-               <div key={member.id} className="flex flex-col items-center print-page-break" style={{ pageBreakInside: 'avoid' }}>
+               <div key={member.id} className="flex flex-col items-center print-page-break shrink-0" style={{ pageBreakInside: 'avoid', width: count <= 4 ? '45%' : count <= 9 ? '30%' : count <= 12 ? '22%' : '18%' }}>
                   
                   {/* QR Box with Thick Colored Border */}
                   <div className={`bg-white border-indigo-600 flex items-center justify-center relative ${getQRSizeClasses(count)}`}>

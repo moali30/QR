@@ -9,7 +9,7 @@ interface FormItemProps {
   onRemove: (id: string) => void;
 }
 
-export function FormItem({ member, onUpdate, onRemove }: FormItemProps) {
+export const FormItem: React.FC<FormItemProps> = ({ member, onUpdate, onRemove }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

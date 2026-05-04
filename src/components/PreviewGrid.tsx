@@ -14,24 +14,31 @@ export function PreviewGrid({ members, roomName, reportSubtitle, universityLogo,
 
   const getLayoutClasses = (count: number) => {
     if (count === 1) return 'flex flex-col items-center justify-center mt-12 mb-12';
-    if (count === 2) return 'grid grid-cols-2 gap-20 mt-16 max-w-4xl mx-auto';
-    if (count <= 4) return 'grid grid-cols-2 gap-y-20 gap-x-16 mt-12 max-w-4xl mx-auto px-4';
-    if (count <= 6) return 'grid grid-cols-3 gap-y-16 gap-x-12 mt-10';
-    return 'grid grid-cols-3 gap-y-14 gap-x-8 mt-8';
+    if (count === 2) return 'flex flex-wrap justify-center gap-20 mt-16 max-w-4xl mx-auto';
+    if (count <= 4) return 'flex flex-wrap justify-center gap-y-16 gap-x-12 mt-12 max-w-4xl mx-auto px-4';
+    if (count <= 6) return 'flex flex-wrap justify-center gap-y-12 gap-x-10 mt-10';
+    if (count <= 9) return 'flex flex-wrap justify-center gap-y-10 gap-x-8 mt-8';
+    if (count <= 12) return 'flex flex-wrap justify-center gap-y-8 gap-x-6 mt-6';
+    return 'flex flex-wrap justify-center gap-y-6 gap-x-4 mt-4';
   };
 
   const getQRSizeClasses = (count: number) => {
     if (count === 1) return 'w-72 h-72 lg:w-80 lg:h-80 border-[10px] rounded-[2rem] p-5 shadow-2xl';
     if (count === 2) return 'w-56 h-56 lg:w-64 lg:h-64 border-8 rounded-3xl p-4 shadow-xl';
-    if (count <= 4) return 'w-48 h-48 border-[6px] rounded-2xl p-3 shadow-lg';
-    return 'w-36 h-36 lg:w-40 lg:h-40 border-4 rounded-xl p-2 shadow-md';
+    if (count <= 4) return 'w-48 h-48 lg:w-56 lg:h-56 border-[6px] rounded-2xl p-3 shadow-lg';
+    if (count <= 6) return 'w-40 h-40 lg:w-44 lg:h-44 border-[5px] rounded-xl p-2.5 shadow-md';
+    if (count <= 9) return 'w-32 h-32 lg:w-36 lg:h-36 border-4 rounded-xl p-2 shadow-sm';
+    if (count <= 12) return 'w-28 h-28 lg:w-32 lg:h-32 border-3 rounded-lg p-1.5 shadow-sm';
+    return 'w-24 h-24 lg:w-28 lg:h-28 border-2 rounded-lg p-1 shadow-sm';
   };
   
   const getTextSizeClasses = (count: number) => {
     if (count === 1) return 'text-xl lg:text-3xl min-w-[280px] lg:min-w-[400px] px-8 py-4 lg:py-5 rounded-2xl';
     if (count === 2) return 'text-lg lg:text-xl min-w-[220px] lg:min-w-[280px] px-6 py-3 rounded-xl';
     if (count <= 4) return 'text-base lg:text-lg min-w-[180px] lg:min-w-[220px] px-5 py-2.5 rounded-xl';
-    return 'text-xs lg:text-sm min-w-[140px] lg:min-w-[180px] px-3 py-2 rounded-lg';
+    if (count <= 6) return 'text-sm lg:text-base min-w-[140px] lg:min-w-[180px] px-4 py-2 rounded-lg';
+    if (count <= 9) return 'text-xs lg:text-sm min-w-[120px] lg:min-w-[160px] px-3 py-1.5 rounded-lg';
+    return 'text-[10px] lg:text-xs min-w-[100px] lg:min-w-[140px] px-2 py-1 rounded-md';
   };
 
   const getTriangleClasses = (count: number) => {
@@ -79,7 +86,7 @@ export function PreviewGrid({ members, roomName, reportSubtitle, universityLogo,
         ) : (
           <div className={`${getLayoutClasses(count)} flex-1 w-full`}>
             {members.map((member, index) => (
-              <div key={member.id} className="flex flex-col items-center group cursor-default">
+              <div key={member.id} className="flex flex-col items-center group cursor-default shrink-0" style={{ width: count <= 4 ? '45%' : count <= 9 ? '30%' : count <= 12 ? '22%' : '18%' }}>
                 
                 {/* QR Box */}
                 <div className={`bg-white border-indigo-600 flex items-center justify-center relative transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_25px_-5px_rgba(79,70,229,0.3)] ${getQRSizeClasses(count)}`}>
